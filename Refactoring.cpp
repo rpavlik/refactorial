@@ -18,6 +18,7 @@
 #include "clang/Lex/Lexer.h"
 #include "clang/Rewrite/Core/Rewriter.h"
 #include "llvm/Support/raw_os_ostream.h"
+#include "llvm/Support/FileSystem.h"
 #include <algorithm>
 
 #include "Refactoring.h"
@@ -159,9 +160,9 @@ bool saveRewrittenFiles(Rewriter &Rewrite) {
         Rewrite.getSourceMgr().getFileEntryForID(I->first);
     std::string ErrorInfo;
     llvm::raw_fd_ostream FileStream(
-        Entry->getName(), ErrorInfo, llvm::raw_fd_ostream::F_Binary);
+        Entry->getName(), ErrorInfo, llvm::sys::fs::F_Binary);
     llvm::raw_fd_ostream BackupStream(
-	    (std::string(Entry->getName()) + ".orig").c_str(), ErrorInfo, llvm::raw_fd_ostream::F_Binary);
+	    (std::string(Entry->getName()) + ".orig").c_str(), ErrorInfo, llvm::sys::fs::F_Binary);
     if (!ErrorInfo.empty())
       return false;
     BackupStream << Rewrite.getSourceMgr().getBufferData(I->first);
